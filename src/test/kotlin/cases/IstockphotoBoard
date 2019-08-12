@@ -1,0 +1,60 @@
+package cases;
+
+import Framework.PageController
+import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Selenide;
+import org.testng.Assert.*
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import pages.PageBoard;
+import pages.PageMain;
+import pages.PageSearchPhotoResult;
+
+public class IstockphotoBoard
+{
+    @BeforeTest
+    fun setUp()
+    {
+        Configuration.browser = "chrome";
+        System.setProperty("selenide.browser", "chrome");
+    }
+
+    @Test(priority = 0)
+    fun main()
+    {
+        Selenide.open("https://www.istockphoto.com/");
+
+        var photoId = ""
+
+        PageController.getPage(PageMain::class.java)
+                .goToSignIn()
+                .logIn("svk21400@gmail.com", "SuperPass888")
+                .dropDownListBoards.goToCreateBoard()
+                .createBoard("Board").also {
+                    assertTrue(it.dropDownListBoards.isBoardExist("Board"))
+                }
+                .goToPhotos()
+                .searchPhotos("Test").also {
+                    photoId = it.getPhotoId(0)
+                }
+                .goToAddPhotoToBoard(0)
+                .savePhotoToBoard("Board")
+                .dropDownListBoards.goToPageBoard("Board").also {
+                    assertTrue(it.isPhotoExist(photoId))
+                }
+                .deletePhoto(photoId).also {
+                    assertFalse(it.isPhotoExist(photoId))
+                }
+                .deleteBoard().also {
+                    assertFalse(it.boardsList.isBoardExist("Board"))
+                }
+                .leftAccountMenu.clickSignOut();
+    }
+
+    @AfterTest
+    fun tearDown()
+    {
+        Selenide.close();
+    }
+}
