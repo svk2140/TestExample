@@ -11,7 +11,7 @@ import pages.PageBoard;
 import pages.PageMain;
 import pages.PageSearchPhotoResult;
 
-public class IstockphotoBoard
+class IstockphotoBoard
 {
     @BeforeTest
     fun setUp()
@@ -25,7 +25,7 @@ public class IstockphotoBoard
     {
         Selenide.open("https://www.istockphoto.com/");
 
-        var photoId = ""
+        lateinit var photoId: String
 
         PageController.getPage(PageMain::class.java)
                 .goToSignIn()
